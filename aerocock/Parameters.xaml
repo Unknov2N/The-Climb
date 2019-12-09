@@ -1,0 +1,33 @@
+﻿<Window x:Class="aerocock.Parameters"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:aerocock"
+        mc:Ignorable="d"
+        Title="Parameters" Height="768" Width="1366" WindowState="Maximized" WindowStyle="None" Background="White" KeyDown="Window_KeyDown">
+    
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="Objects/Backgrounds/background1.jpg" Stretch="UniformToFill"/>
+        </Grid.Background>
+        <CheckBox x:Name="Back" Click="Back_Click" Style="{DynamicResource BackButtonStyle}"/>
+        <CheckBox x:Name="go" Click="Go_Click" Content="Поехали!" VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="200" Margin="0,0,0,0" Style="{DynamicResource NextButtonStyle}" />
+
+        <CheckBox x:Name="easy" Click="Speed_Click"  Content="легко" HorizontalAlignment="Center" Margin="-600,70,0,0" Style="{DynamicResource ParameterButtonStyle}" VerticalAlignment="Top" />
+        <CheckBox x:Name="medium" Click="Speed_Click"  Content="средне"  HorizontalAlignment="Center" Margin="0,70,0,0" Style="{DynamicResource ParameterButtonStyle}" VerticalAlignment="Top" />
+        <CheckBox x:Name="hard"  Click="Speed_Click" Content="сложно" HorizontalAlignment="Center" Margin="600,70,0,0" Style="{DynamicResource ParameterButtonStyle}" VerticalAlignment="Top" />
+        <!--CheckBox x:Name="speedball" Click="Speed_Click"  Content="случайно" HorizontalAlignment="Center" Height="100" Margin="600,50,0,0" Style="{DynamicResource ParameterButtonStyle}" VerticalAlignment="Top"/-->
+        
+        <CheckBox x:Name="adult" Click="Age_Click" Content="3 метра"  VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,900,185" Style="{DynamicResource ParameterButtonStyle}"  />
+        <CheckBox x:Name="child" Click="Age_Click" Content="2 метра" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="900,0,0,185" Style="{DynamicResource ParameterButtonStyle}" />
+        <Grid Height="500" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <!--Rectangle x:Name="Size" Fill="indigo" HorizontalAlignment="Center" Height="450" Margin="0,0,0,0" Stroke="White" StrokeThickness="5" VerticalAlignment="Bottom" Width="450"></-->
+            <CheckBox x:Name="Size" Content="CheckBox" Style="{DynamicResource FieldSizeStyle}"/>
+            <TextBlock Foreground="White" FontFamily="pack://application:,,,/Objects/Fonts/#a_LCDNova" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,20" TextWrapping="Wrap" Text="высота игрового поля" />
+        </Grid>
+
+
+
+    </Grid>
+</Window>
