@@ -1,29 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using aerocock.Models;
-using System.Windows.Threading;
+﻿using System.Windows;
 
 //разобраться с говном в коментах и  Versus:Game
-namespace aerocock//.Game
+namespace aerocock //.Game
 {
     /// <summary>
-    /// Логика взаимодействия для Game.xaml
+    ///     Логика взаимодействия для Game.xaml
     /// </summary>
-    public partial class Game//: Window
+    public partial class Game //: Window
     {
         public delegate void stop_the_game();
-        public event stop_the_game STOP;
         /*int secondsEnum;
         //int timeCountdown;
         DispatcherTimer
@@ -32,7 +17,8 @@ namespace aerocock//.Game
              Continuetimer = new DispatcherTimer(),
              timetimer = new DispatcherTimer();*/
 
-        public Game() { }
+        public event stop_the_game STOP;
+
         /*public Game(ref int secondsEnum, ref DispatcherTimer Starttimer, ref DispatcherTimer VStimer, 
             ref DispatcherTimer Continuetimer, ref DispatcherTimer timetimer)
         {
@@ -47,7 +33,7 @@ namespace aerocock//.Game
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //if (System.Windows.Forms.Screen.AllScreens.Length == 1)
-                //Close();//  this.Opacity = 0;
+            //Close();//  this.Opacity = 0;
         }
 
         private void Stop_Click(object sender, RoutedEventArgs e)

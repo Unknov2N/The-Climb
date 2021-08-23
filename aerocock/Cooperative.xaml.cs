@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Media;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Threading;
-using Microsoft.Kinect;
-using System.Media;
 using aerocock.Models;
-using System.Configuration;
+using Microsoft.Kinect;
+using WMPLib;
+using Application = System.Windows.Application;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
+
 //using aerocock.Game;
 
 /*  DONE сделать выход по завершении вермени
@@ -37,40 +36,61 @@ using System.Configuration;
 */
 namespace aerocock
 {
-
     public partial class Cooperative : Window
     {
-        Game game;
-        DispatcherTimer
-            Starttimer = new DispatcherTimer(),
-            /*Continuetimer = new DispatcherTimer(),*/
-            Pointstimer = new DispatcherTimer(),
-            COOPtimer = new DispatcherTimer(),
-            timetimer = new DispatcherTimer(),
-            pointsdelay = new DispatcherTimer();
-        GameBall gameball;
-        Ball player1, player2;
-        List<CoopPoint> points;
+        private _const c; // = new _const();
+
+        private double
+            coeffAspectRatio;
+
+        private readonly double
+            blinkMs = 1000d / 5;
+
+        private double
+            addBallTime,
+            offset;
+        //int msperframe;
+
+        private readonly SoundPlayer collision_audio;
+        private readonly SoundPlayer score_audio;
+        private readonly SoundPlayer win_audio;
+        private readonly SoundPlayer time_audio;
+        private Game game;
+        private GameBall gameball;
+        private Ball player1, player2;
+
+        private List<CoopPoint> points;
+
         //Vector ballvelocity;
-        int
+        private int
             pWidth,
             pHeight,
             secondsEnum = 3,
             timeCountdown,
-            score = 0,
-            maxscore = 0,
-            attempt = 0;
-        double
-            coeffAspectRatio,
-            blinkMs = 1000d / 5,
-            addBallTime = 0,
-            offset = 0;
-       
-        _const c;// = new _const();
-        //int msperframe;
+            score,
+            maxscore,
+            attempt;
 
-        SoundPlayer collision_audio, score_audio, win_audio, time_audio;
-        WMPLib.WindowsMediaPlayer soundBackground;
+        private WindowsMediaPlayer soundBackground;
+
+        private readonly DispatcherTimer
+            Starttimer = new DispatcherTimer();
+
+        private readonly DispatcherTimer
+            /*Continuetimer = new DispatcherTimer(),*/
+            Pointstimer = new DispatcherTimer();
+
+        private readonly DispatcherTimer
+            /*Continuetimer = new DispatcherTimer(),*/
+            COOPtimer = new DispatcherTimer();
+
+        private readonly DispatcherTimer
+            /*Continuetimer = new DispatcherTimer(),*/
+            timetimer = new DispatcherTimer();
+
+        private readonly DispatcherTimer
+            /*Continuetimer = new DispatcherTimer(),*/
+            pointsdelay = new DispatcherTimer();
 
 
         public Cooperative(ref _const c)
@@ -84,188 +104,6 @@ namespace aerocock
             time_audio = new SoundPlayer();
         }
 
-        #region Kinect
-        private KinectSensor _sensor = KinectSensor.GetDefault();
-        private BodyFrameReader bodyFrameReader, prepareFrameReader;
-        private FrameDescription frameDescription;
-
-        private void SensorInit()
-        {
-            if (_sensor == null)
-            {
-                MessageBox.Show($"{nameof(_sensor)}==Кинект не подключен");
-                //Close();
-                //this.KinectError.Visibility = Visibility.Visible;
-            }
-            frameDescription = this._sensor.DepthFrameSource.FrameDescription;
-            //CanvaForKinect.Height = frameDescription.Height;
-            //CanvaForKinect.Width = frameDescription.Height;
-            prepareFrameReader = this._sensor.BodyFrameSource.OpenReader();
-            prepareFrameReader.FrameArrived += PrepareToGame;
-            _sensor.Open();
-        }
-
-        private void AllPlayersReady()
-        {
-            prepareFrameReader.Dispose();
-            bodyFrameReader = this._sensor.BodyFrameSource.OpenReader();
-            bodyFrameReader.FrameArrived += BodyFrameReader_FrameArrived;
-            //запуск игры
-            Starttimer.Start();
-        }
-
-        private void PrepareToGame(object sender, BodyFrameArrivedEventArgs e)
-        {
-            bool dataReceived = false;
-
-            using (BodyFrame bodyFrame = e.FrameReference.AcquireFrame())
-            {
-                if (bodyFrame != null)
-                {
-                    if (this.bodies == null)
-                    {
-                        this.bodies = new Body[bodyFrame.BodyCount];
-                    }
-                    bodyFrame.GetAndRefreshBodyData(this.bodies);
-                    dataReceived = true;
-                }
-            }
-
-            if (dataReceived)
-            {
-                CanvaForKinect.Children.Clear();
-                foreach (Body body in bodies)
-                {
-                    if (body.IsTracked)
-                    {
-                        double LeftX = body.Joints[JointType.WristLeft].Position.X,
-                           LeftY = body.Joints[JointType.WristLeft].Position.Y,
-                           LeftZ = body.Joints[JointType.WristLeft].Position.Z,
-                           RightX = body.Joints[JointType.WristRight].Position.X,
-                           RightY = body.Joints[JointType.WristRight].Position.Y,
-                           RightZ = body.Joints[JointType.WristRight].Position.Z;
-
-                        if ((LeftY > 11 / 30.0 * 1.5 && LeftY < 2 / 3.0 * 1.5) || (RightY > 11 / 30.0 * 1.5 && RightY < 2 / 3.0 * 1.5))
-                        {
-                            if ((LeftX > 1 / 4.0 * 1.5 && LeftX < 3 / 4.0 * 1.5) || (RightX > 1 / 4.0 * 1.5 && RightX < 3 / 4.0 * 1.5))
-                                Ready(ReadyPlayer1);
-                            if ((LeftX < -1 / 4.0 * 1.5 && LeftX > -3 / 4.0 * 1.5) || (RightX < -1 / 4.0 * 1.5 && RightX > -3 / 4.0 * 1.5))
-                                Ready(ReadyPlayer2);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void Ready(TextBlock Ready)
-        {
-            Ready.Visibility = Visibility.Hidden;
-            if (ReadyPlayer1.Visibility == Visibility.Hidden && ReadyPlayer2.Visibility == Visibility.Hidden)
-            {
-                AllPlayersReady();
-            }
-        }
-
-        private void _sensor_IsAvailableChanged(object sender, IsAvailableChangedEventArgs e)
-        {
-            if (e.IsAvailable)
-            {
-
-                //this.KinectError.Visibility = Visibility.Hidden;
-            }
-            //else // ставить игру на паузу
-            //this.KinectError.Visibility = Visibility.Visible;
-        }
-
-        private Body[] bodies = null;
-
-        private void BodyFrameReader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
-        {
-            bool dataReceived = false;
-
-            using (BodyFrame bodyFrame = e.FrameReference.AcquireFrame())
-            {
-                if (bodyFrame != null)
-                {
-                    if (this.bodies == null)
-                    {
-                        this.bodies = new Body[bodyFrame.BodyCount];
-                    }
-                    bodyFrame.GetAndRefreshBodyData(this.bodies);
-                    dataReceived = true;
-                }
-            }
-
-            if (dataReceived)
-            {
-                CanvaForKinect.Children.Clear();
-                SolidColorBrush PlayerColor = Brushes.Azure;
-                foreach (Body body in bodies)
-                {
-                    if (body.IsTracked)
-                    {
-                        if (body.Joints[JointType.SpineMid].Position.X > 0)
-                            PlayerColor = Brushes.Red;
-                        foreach (JointType jointType in body.Joints.Keys)
-                        {
-                            switch (jointType)
-                            {
-                                case JointType.HandTipLeft:
-                                    SetJointToCanva(body.Joints[jointType], PlayerColor);
-                                    break;
-                                case JointType.HandTipRight:
-                                    SetJointToCanva(body.Joints[jointType], PlayerColor);
-                                    break;
-                                case JointType.FootLeft:
-                                    SetJointToCanva(body.Joints[jointType], PlayerColor);
-                                    break;
-                                case JointType.FootRight:
-                                    SetJointToCanva(body.Joints[jointType], PlayerColor);
-                                    break;
-                                default:
-                                    //SetJointToCanva(body.Joints[jointType], PlayerColor);
-                                    break;
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
-        private void SetJointToCanva(Joint point, SolidColorBrush color)
-        {
-
-            double x = -point.Position.X * 3.7 / point.Position.Z,//*/ -Instructions.Arounding(point.Position.X * 3.7 / point.Position.Z, 0.125),//125),
-                y = point.Position.Y * 3.7 / point.Position.Z;//*/ Instructions.Arounding(point.Position.Y * 3.7 / point.Position.Z, 0.125);// 125);
-            //double x1 = -Instructions.Arounding(point.Position.X, 0.125),//125)
-            //    y1 = Instructions.Arounding(point.Position.Y, 0.125);// 125);
-            try
-            {
-                //if (c.Matrix[(int)(-y * 8 + 12), (int)(24 - (-x * 8 + 12))] != 0)
-                //if (c.Matrix[(int)(-y1 * 8 + 12), (int)(24 - (-x1 * 8 + 12))] != 0)
-                //if (true)
-                //if (c.Matrix[(int)(-Instructions.Arounding(y, 0.125) * 8 + 12), (int)(24 - (Instructions.Arounding(x, 0125) * 8 + 12))] != 0)
-                {
-                    Ball PointBall;
-                    if (color == Brushes.Red)
-                    {
-                        PointBall = new Ball(c.radius, pHeight, pWidth, coeffAspectRatio, "pack://application:,,,/Objects/Balls/Discs/red.png");
-                    }
-                    else
-                    {
-                        PointBall = new Ball(c.radius, pHeight, pWidth, coeffAspectRatio, "pack://application:,,,/Objects/Balls/Discs/blue.png");
-                    }
-                    PointBall.Setpos(CanvaForKinect, x, y);
-                    gameball.Collision(CanvaForKinect, PointBall);
-                }
-
-            }
-            catch (Exception)
-            {
-            }
-        }
-        #endregion
         private void AudioInit()
         {
             var audio = aerocock.Resources.collision;
@@ -281,39 +119,39 @@ namespace aerocock
             time_audio.Stream = audio;
             time_audio.LoadAsync();
 
-            soundBackground = new WMPLib.WindowsMediaPlayer();
-            soundBackground.URL = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Objects/Audio/VersusBackgroundMusic.mp3");//ConfigurationManager.AppSettings["ResoursePath"] + "VersusBackgroundMusic.wav"; ;//"C:/Users/v0v4y/Desktop/temp/ClimBall/aerocock/Objects/Audio/VersusBackgroundMusic.wav";//"pack://application:,,,/Objects/Audio/tada.wav";
+            soundBackground = new WindowsMediaPlayer();
+            soundBackground.URL =
+                Path.Combine(Directory.GetCurrentDirectory(),
+                    "Objects/Audio/VersusBackgroundMusic.mp3"); //ConfigurationManager.AppSettings["ResoursePath"] + "VersusBackgroundMusic.wav"; ;//"C:/Users/v0v4y/Desktop/temp/ClimBall/aerocock/Objects/Audio/VersusBackgroundMusic.wav";//"pack://application:,,,/Objects/Audio/tada.wav";
             //soundBackground.settings.volume = 10;
             soundBackground.settings.setMode("loop", true);
             soundBackground.controls.play();
         }
+
         private void SecondScreenInit()
         {
-
-            if (System.Windows.Forms.Screen.AllScreens.Length == 2)
+            if (Screen.AllScreens.Length == 2)
             {
                 Back.Visibility = Visibility.Hidden;
-                game = new Game();// ref secondsEnum, ref Starttimer, ref VStimer, ref Continuetimer, ref timetimer);
+                game = new Game(); // ref secondsEnum, ref Starttimer, ref VStimer, ref Continuetimer, ref timetimer);
                 game.STOP += Stop_the_game;
                 game.Show();
-                pHeight = (int)(double)(System.Windows.Forms.Screen.AllScreens[1].WorkingArea.Height);
-                pWidth = (int)(c.width / c.height * (double)System.Windows.Forms.Screen.AllScreens[1].WorkingArea.Height);
+                pHeight = (int) (double) Screen.AllScreens[1].WorkingArea.Height;
+                pWidth = (int) (c.width / c.height * Screen.AllScreens[1].WorkingArea.Height);
             }
             else
             {
-                pHeight = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
-                pWidth = (int)(c.width / c.height * System.Windows.SystemParameters.PrimaryScreenHeight);
+                pHeight = (int) SystemParameters.PrimaryScreenHeight;
+                pWidth = (int) (c.width / c.height * SystemParameters.PrimaryScreenHeight);
             }
         }
+
         private void GameFieldInit()
         {
-            if (c.age == "child")
-            {
-                offset = c.fieldVerticalOffset;
-            }
+            if (c.age == "child") offset = c.fieldVerticalOffset;
             //рисуем неоновые границы игрового окна в зависимости от размеров (3*2, 3*3, 4*2, 4*3 метра)
             box.Source = new BitmapImage(new Uri(Instructions.GameBox_Paint(ref c, ref offset)));
-            coeffAspectRatio = (double)pHeight / c.height;
+            coeffAspectRatio = pHeight / c.height;
 
             //CanvaForKinect.Width = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
             //CanvaForKinect.Height = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
@@ -326,16 +164,16 @@ namespace aerocock
             Canvas.SetTop(countdownText, (pHeight - countdownText.FontSize) / 2);
             Canvas.SetLeft(countdownText, pWidth / 2 - countdownText.FontSize);
             Grid.Margin = new Thickness(0, coeffAspectRatio * offset, 0, 0);
-            Grid.Height = 1.0 * coeffAspectRatio * (c.height) * (1 - offset / c.height);
-
+            Grid.Height = 1.0 * coeffAspectRatio * c.height * (1 - offset / c.height);
         }
+
         private void TimersInit()
         {
             timeCountdown = c.coopMaxTime;
 
             Starttimer.Interval =
-            timetimer.Interval =
-            /*//Continuetimer.Interval = */TimeSpan.FromSeconds(1d);
+                timetimer.Interval =
+                    /*//Continuetimer.Interval = */TimeSpan.FromSeconds(1d);
             Pointstimer.Interval = TimeSpan.FromMilliseconds(blinkMs);
             pointsdelay.Interval = TimeSpan.FromMilliseconds(c.lifeTimeMs / 2);
             COOPtimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / c.fps);
@@ -348,15 +186,15 @@ namespace aerocock
 
             if (c.regime == "time")
             {
-                timerText.Text = "время " + timeCountdown.ToString() + " ";
+                timerText.Text = "время " + timeCountdown + " ";
                 //COOPtimer.Tick += COOPtime_Tick;
                 one_x.Visibility =
-               two_x.Visibility =
-               three_x.Visibility = Visibility.Hidden;
+                    two_x.Visibility =
+                        three_x.Visibility = Visibility.Hidden;
             }
+
             scoreText.Text = "очки " + "0";
             //Continuetimer.Tick += Continue_Tick;
-           
 
 
             /*if (c.regime == "score")
@@ -383,16 +221,22 @@ namespace aerocock
             //Continuetimer.Tick += Continue_Tick;
             Starttimer.Tick += Start_Tick;*/
         }
+
         private void BallsInit()
         {
             points = new List<CoopPoint>();
-            gameball = new GameBall(c.gameballradius, pHeight, pWidth, coeffAspectRatio, "pack://application:,,,/Objects/Balls/Circles/magenta.png");
-            player1 = new Player(c.radius, pHeight, pWidth, coeffAspectRatio, "left", "pack://application:,,,/Objects/Balls/Discs/red.png");
-            player2 = new Player(c.radius, pHeight, pWidth, coeffAspectRatio, "right", "pack://application:,,,/Objects/Balls/Discs/blue.png");
+            gameball = new GameBall(c.gameballradius, pHeight, pWidth, coeffAspectRatio,
+                "pack://application:,,,/Objects/Balls/Circles/magenta.png");
+            player1 = new Player(c.radius, pHeight, pWidth, coeffAspectRatio, "left",
+                "pack://application:,,,/Objects/Balls/Discs/red.png");
+            player2 = new Player(c.radius, pHeight, pWidth, coeffAspectRatio, "right",
+                "pack://application:,,,/Objects/Balls/Discs/blue.png");
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Instructions.Log.GameCounter("Игра в режиме " + c.type + " " + c.speed + " (" + c.age + ") запущена", Instructions.CountType.START);
+            Instructions.Log.GameCounter("Игра в режиме " + c.type + " " + c.speed + " (" + c.age + ") запущена",
+                Instructions.CountType.START);
             AudioInit();
             SecondScreenInit();
             GameFieldInit();
@@ -408,55 +252,57 @@ namespace aerocock
             //Starttimer.Start();
         }
 
-        void Delay_Tick(object sender, EventArgs e)
+        private void Delay_Tick(object sender, EventArgs e)
         {
-                points.Add(new CoopPoint(Canva, c.gameballradius, pHeight, pWidth, coeffAspectRatio, offset, c.coopPointHalfWidth, c.height,
-                    "pack://application:,,,/Objects/Balls/Circles/Yellow.png"));
-                points.Last().collide += Collected;
+            points.Add(new CoopPoint(Canva, c.gameballradius, pHeight, pWidth, coeffAspectRatio, offset,
+                c.coopPointHalfWidth, c.height,
+                "pack://application:,,,/Objects/Balls/Circles/Yellow.png"));
+            points.Last().collide += Collected;
             //Canva.Children.Add(points.Last().image);
 
-            var timer = (DispatcherTimer)sender;
+            var timer = (DispatcherTimer) sender;
             timer.Stop();
             Pointstimer.Start();
 
             if (c.regime == "time")
                 timetimer.Start();
         }
-        void Point_Tick(object sender, EventArgs e)
+
+        private void Point_Tick(object sender, EventArgs e)
         {
             if (addBallTime >= c.newPointsMs)
             {
                 addBallTime = 0;
-                points.Add(new CoopPoint(Canva, c.gameballradius, pHeight, pWidth, coeffAspectRatio, offset, c.coopPointHalfWidth, c.height,
+                points.Add(new CoopPoint(Canva, c.gameballradius, pHeight, pWidth, coeffAspectRatio, offset,
+                    c.coopPointHalfWidth, c.height,
                     "pack://application:,,,/Objects/Balls/Circles/Yellow.png"));
                 points.Last().collide += Collected;
                 //Canva.Children.Add(points.Last().image);
             }
 
-            foreach (CoopPoint item in points)
+            foreach (var item in points)
                 item.Blink(c.startBlinkMs);
 
-            for (int i = points.Count - 1; i >= 0; i--)
+            for (var i = points.Count - 1; i >= 0; i--)
                 if (points[i].lifeTimeMs > c.lifeTimeMs)
                 {
                     Canva.Children.Remove(points[i].image);
                     points.RemoveAt(i);
                 }
+
             /*if (points.First().lifeTimeMs > c.lifeTimeMs)
             {
                 Canva.Children.Remove(points.First().image);
                 points.RemoveAt(0);
             }*/
-                foreach (CoopPoint item in points)
+            foreach (var item in points)
                 item.lifeTimeMs += blinkMs;
             addBallTime += blinkMs;
         }
-        void Start_Tick(object sender, EventArgs e)
+
+        private void Start_Tick(object sender, EventArgs e)
         {
-            if (secondsEnum > 0)
-            {
-                countdownText.Text = "" + secondsEnum.ToString();
-            }
+            if (secondsEnum > 0) countdownText.Text = "" + secondsEnum;
             switch (secondsEnum)
             {
                 case 0:
@@ -484,35 +330,36 @@ namespace aerocock
                     Stop_the_game();
                     break;
             }
+
             secondsEnum--;
         }
 
-       /* void Continue_Tick(object sender, EventArgs e)// от -2 до -4: когда мы проиграли, потом -4:-7, -2:-7  когда выиграли POPEDA!S
-        {
-            switch (secondsEnum)
-            {
-                case 1:
-                    countdownText.Text = "внимание";
-                    break;
+        /* void Continue_Tick(object sender, EventArgs e)// от -2 до -4: когда мы проиграли, потом -4:-7, -2:-7  когда выиграли POPEDA!S
+         {
+             switch (secondsEnum)
+             {
+                 case 1:
+                     countdownText.Text = "внимание";
+                     break;
+ 
+                 case 0:
+                     countdownText.Text = "Начали!";
+                     break;
+ 
+                 case -1:
+                     countdownText.Text = "";
+                     Continuetimer.Stop();//((DispatcherTimer)sender).Stop();
+                     pointsdelay.Start();
+                     COOPtimer.Start();
+ 
+                     gameball.Setpos(Canva, 0, -offset / 2);
+                     gameball.Randomvelocity(c.minVelocity, c.maxVelocity, c.multiplier, c.speed);
+                     //ballvelocity = Randomvelocity(c.minVelocity, c.maxVelocity, c.speed);
+                     break;
+             }
+         }*/
 
-                case 0:
-                    countdownText.Text = "Начали!";
-                    break;
-
-                case -1:
-                    countdownText.Text = "";
-                    Continuetimer.Stop();//((DispatcherTimer)sender).Stop();
-                    pointsdelay.Start();
-                    COOPtimer.Start();
-
-                    gameball.Setpos(Canva, 0, -offset / 2);
-                    gameball.Randomvelocity(c.minVelocity, c.maxVelocity, c.multiplier, c.speed);
-                    //ballvelocity = Randomvelocity(c.minVelocity, c.maxVelocity, c.speed);
-                    break;
-            }
-        }*/
-
-        void _timer_Tick(object sender, EventArgs e)
+        private void _timer_Tick(object sender, EventArgs e)
         {
             timeCountdown--;
             if (timeCountdown == 10)
@@ -523,7 +370,7 @@ namespace aerocock
 
             if (timeCountdown <= 0)
             {
-                foreach (CoopPoint _item in points)
+                foreach (var _item in points)
                     Canva.Children.Remove(_item.image);
                 points.Clear();
 
@@ -557,33 +404,35 @@ namespace aerocock
                 COOPtimer.Stop();
                 Starttimer.Start();
             }
-            timerText.Text = "время " + timeCountdown.ToString() + " ";
+
+            timerText.Text = "время " + timeCountdown + " ";
         }
 
-        void COOP_Tick(object sender, EventArgs e)//работа игры без действий
-        {/*
-            Canva.Children.Remove(gameball.image);
-            Canva.Children.Remove(player1.image);
-            Canva.Children.Remove(player2.image);*/
+        private void COOP_Tick(object sender, EventArgs e) //работа игры без действий
+        {
+            /*
+                        Canva.Children.Remove(gameball.image);
+                        Canva.Children.Remove(player1.image);
+                        Canva.Children.Remove(player2.image);*/
 
             gameball.Changeposition(Canva, c.fps, offset);
             gameball.Collision(Canva, player1);
             gameball.Collision(Canva, player2);
-            if (points.Count != 0) 
-            foreach (CoopPoint item in points)
-                if (item.existence)
-                    item.Collision(gameball, c.lifeTimeMs);
+            if (points.Count != 0)
+                foreach (var item in points)
+                    if (item.existence)
+                        item.Collision(gameball, c.lifeTimeMs);
         }
-        
+
         public void Collected()
         {
             //play_effect("win");
-            
+
             score++;
-            scoreText.Text = "очки " + (c.coopScoreMultiplier * score).ToString();
+            scoreText.Text = "очки " + c.coopScoreMultiplier * score;
             if (score >= c.coopWinScore)
             {
-                foreach (CoopPoint _item in points)
+                foreach (var _item in points)
                     Canva.Children.Remove(_item.image);
                 //points.Clear();
                 Canva.Children.Remove(player1.image);
@@ -638,13 +487,16 @@ namespace aerocock
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                Point mousepos = Mouse.GetPosition(Canva);
-                player1.Setpos(Canva, (-pWidth / 2 + mousepos.X) / coeffAspectRatio, (pHeight / 2 - mousepos.Y) / coeffAspectRatio);
+                var mousepos = Mouse.GetPosition(Canva);
+                player1.Setpos(Canva, (-pWidth / 2 + mousepos.X) / coeffAspectRatio,
+                    (pHeight / 2 - mousepos.Y) / coeffAspectRatio);
             }
+
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                Point mousepos = Mouse.GetPosition(Canva);
-                player2.Setpos(Canva, (-pWidth / 2 + mousepos.X) / coeffAspectRatio, (pHeight / 2 - mousepos.Y) / coeffAspectRatio);
+                var mousepos = Mouse.GetPosition(Canva);
+                player2.Setpos(Canva, (-pWidth / 2 + mousepos.X) / coeffAspectRatio,
+                    (pHeight / 2 - mousepos.Y) / coeffAspectRatio);
             }
         }
 
@@ -666,18 +518,16 @@ namespace aerocock
                         win_audio.Play();
                         break;
                 }
-
             }
             catch
             {
-                string dir = System.IO.Directory.GetCurrentDirectory();
+                var dir = Directory.GetCurrentDirectory();
                 MessageBox.Show(dir);
             }
         }
 
         public void Stop_the_game()
         {
-
             //soundBackground.controls.stop();
             c.soundBackground.controls.play();
 
@@ -703,7 +553,7 @@ namespace aerocock
                 Stop_the_game();
                 //Instructions.Log.GameCounter("Игра завершена.", Instructions.CountType.STOP);
                 Instructions.Log.Info("Окно игры закрыто пользователем");
-                foreach (Window w in App.Current.Windows)
+                foreach (Window w in Application.Current.Windows)
                     w.Close();
             }
         }
@@ -716,6 +566,7 @@ namespace aerocock
             Instructions.Log.GameCounter("Игра завершена.", Instructions.CountType.STOP);
             Close();*/
         }
+
         /*public Vector Randomvelocity(double _minvelocity, double _maxvelocity, string _speed)
         {
             double velocity = 0;
@@ -750,8 +601,7 @@ namespace aerocock
         }*/
         public void Out_of_border(string _border)
         {
-
-            foreach (CoopPoint _item in points)
+            foreach (var _item in points)
                 Canva.Children.Remove(_item.image);
             points.Clear();
 
@@ -759,8 +609,8 @@ namespace aerocock
             Canva.Children.Remove(player1.image);
             Canva.Children.Remove(player2.image);
 
-            maxscore = (maxscore < score ? score : maxscore);
-            scoreText.Text = "очки " + (score = 0).ToString();
+            maxscore = maxscore < score ? score : maxscore;
+            scoreText.Text = "очки " + (score = 0);
 
             if (c.regime == "score")
             {
@@ -783,6 +633,7 @@ namespace aerocock
                         three_x_red.Visibility = Visibility.Visible;
                         break;
                 }
+
                 if (attempt > c.coopMaxAttempts)
                 {
                     soundBackground.controls.stop();
@@ -792,9 +643,9 @@ namespace aerocock
                     countdownText.Text = "Вы проиграли!";
                     scoreText.Visibility =
                         one_x_red.Visibility =
-                        two_x_red.Visibility =
-                        three_x_red.Visibility =
-                        Visibility.Hidden;
+                            two_x_red.Visibility =
+                                three_x_red.Visibility =
+                                    Visibility.Hidden;
                 }
                 else
                 {
@@ -802,6 +653,7 @@ namespace aerocock
                     countdownText.Text = "вылет";
                     play_effect("vertical border");
                 }
+
                 if (maxscore >= c.coopWinScore)
                 {
                     //scoreText.Text = "";
@@ -809,8 +661,9 @@ namespace aerocock
                     countdownText.Text = "Победа!";
                     soundBackground.controls.stop();
                 }
-                    //timetimer.Stop();
+                //timetimer.Stop();
             }
+
             if (c.regime == "time")
             {
                 secondsEnum = 3;
@@ -823,8 +676,174 @@ namespace aerocock
             pointsdelay.Stop();
             COOPtimer.Stop();
             Starttimer.Start();
-
-
         }
+
+        #region Kinect
+
+        private KinectSensor _sensor = KinectSensor.GetDefault();
+        private BodyFrameReader bodyFrameReader, prepareFrameReader;
+        private FrameDescription frameDescription;
+
+        private void SensorInit()
+        {
+            if (_sensor == null)
+                MessageBox.Show($"{nameof(_sensor)}==Кинект не подключен");
+            //Close();
+            //this.KinectError.Visibility = Visibility.Visible;
+            frameDescription = _sensor.DepthFrameSource.FrameDescription;
+            //CanvaForKinect.Height = frameDescription.Height;
+            //CanvaForKinect.Width = frameDescription.Height;
+            prepareFrameReader = _sensor.BodyFrameSource.OpenReader();
+            prepareFrameReader.FrameArrived += PrepareToGame;
+            _sensor.Open();
+        }
+
+        private void AllPlayersReady()
+        {
+            prepareFrameReader.Dispose();
+            bodyFrameReader = _sensor.BodyFrameSource.OpenReader();
+            bodyFrameReader.FrameArrived += BodyFrameReader_FrameArrived;
+            //запуск игры
+            Starttimer.Start();
+        }
+
+        private void PrepareToGame(object sender, BodyFrameArrivedEventArgs e)
+        {
+            var dataReceived = false;
+
+            using (var bodyFrame = e.FrameReference.AcquireFrame())
+            {
+                if (bodyFrame != null)
+                {
+                    if (bodies == null) bodies = new Body[bodyFrame.BodyCount];
+                    bodyFrame.GetAndRefreshBodyData(bodies);
+                    dataReceived = true;
+                }
+            }
+
+            if (dataReceived)
+            {
+                CanvaForKinect.Children.Clear();
+                foreach (var body in bodies)
+                    if (body.IsTracked)
+                    {
+                        double LeftX = body.Joints[JointType.WristLeft].Position.X,
+                            LeftY = body.Joints[JointType.WristLeft].Position.Y,
+                            LeftZ = body.Joints[JointType.WristLeft].Position.Z,
+                            RightX = body.Joints[JointType.WristRight].Position.X,
+                            RightY = body.Joints[JointType.WristRight].Position.Y,
+                            RightZ = body.Joints[JointType.WristRight].Position.Z;
+
+                        if (LeftY > 11 / 30.0 * 1.5 && LeftY < 2 / 3.0 * 1.5 ||
+                            RightY > 11 / 30.0 * 1.5 && RightY < 2 / 3.0 * 1.5)
+                        {
+                            if (LeftX > 1 / 4.0 * 1.5 && LeftX < 3 / 4.0 * 1.5 ||
+                                RightX > 1 / 4.0 * 1.5 && RightX < 3 / 4.0 * 1.5)
+                                Ready(ReadyPlayer1);
+                            if (LeftX < -1 / 4.0 * 1.5 && LeftX > -3 / 4.0 * 1.5 ||
+                                RightX < -1 / 4.0 * 1.5 && RightX > -3 / 4.0 * 1.5)
+                                Ready(ReadyPlayer2);
+                        }
+                    }
+            }
+        }
+
+        private void Ready(TextBlock Ready)
+        {
+            Ready.Visibility = Visibility.Hidden;
+            if (ReadyPlayer1.Visibility == Visibility.Hidden && ReadyPlayer2.Visibility == Visibility.Hidden)
+                AllPlayersReady();
+        }
+
+        private void _sensor_IsAvailableChanged(object sender, IsAvailableChangedEventArgs e)
+        {
+            if (e.IsAvailable)
+            {
+                //this.KinectError.Visibility = Visibility.Hidden;
+            }
+            //else // ставить игру на паузу
+            //this.KinectError.Visibility = Visibility.Visible;
+        }
+
+        private Body[] bodies;
+
+        private void BodyFrameReader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
+        {
+            var dataReceived = false;
+
+            using (var bodyFrame = e.FrameReference.AcquireFrame())
+            {
+                if (bodyFrame != null)
+                {
+                    if (bodies == null) bodies = new Body[bodyFrame.BodyCount];
+                    bodyFrame.GetAndRefreshBodyData(bodies);
+                    dataReceived = true;
+                }
+            }
+
+            if (dataReceived)
+            {
+                CanvaForKinect.Children.Clear();
+                var PlayerColor = Brushes.Azure;
+                foreach (var body in bodies)
+                    if (body.IsTracked)
+                    {
+                        if (body.Joints[JointType.SpineMid].Position.X > 0)
+                            PlayerColor = Brushes.Red;
+                        foreach (var jointType in body.Joints.Keys)
+                            switch (jointType)
+                            {
+                                case JointType.HandTipLeft:
+                                    SetJointToCanva(body.Joints[jointType], PlayerColor);
+                                    break;
+                                case JointType.HandTipRight:
+                                    SetJointToCanva(body.Joints[jointType], PlayerColor);
+                                    break;
+                                case JointType.FootLeft:
+                                    SetJointToCanva(body.Joints[jointType], PlayerColor);
+                                    break;
+                                case JointType.FootRight:
+                                    SetJointToCanva(body.Joints[jointType], PlayerColor);
+                                    break;
+                            }
+                    }
+            }
+        }
+
+        private void SetJointToCanva(Joint point, SolidColorBrush color)
+        {
+            double x =
+                    -point.Position.X * 3.7 /
+                    point.Position
+                        .Z, //*/ -Instructions.Arounding(point.Position.X * 3.7 / point.Position.Z, 0.125),//125),
+                y = point.Position.Y * 3.7 /
+                    point.Position
+                        .Z; //*/ Instructions.Arounding(point.Position.Y * 3.7 / point.Position.Z, 0.125);// 125);
+            //double x1 = -Instructions.Arounding(point.Position.X, 0.125),//125)
+            //    y1 = Instructions.Arounding(point.Position.Y, 0.125);// 125);
+            try
+            {
+                //if (c.Matrix[(int)(-y * 8 + 12), (int)(24 - (-x * 8 + 12))] != 0)
+                //if (c.Matrix[(int)(-y1 * 8 + 12), (int)(24 - (-x1 * 8 + 12))] != 0)
+                //if (true)
+                //if (c.Matrix[(int)(-Instructions.Arounding(y, 0.125) * 8 + 12), (int)(24 - (Instructions.Arounding(x, 0125) * 8 + 12))] != 0)
+                {
+                    Ball PointBall;
+                    if (color == Brushes.Red)
+                        PointBall = new Ball(c.radius, pHeight, pWidth, coeffAspectRatio,
+                            "pack://application:,,,/Objects/Balls/Discs/red.png");
+                    else
+                        PointBall = new Ball(c.radius, pHeight, pWidth, coeffAspectRatio,
+                            "pack://application:,,,/Objects/Balls/Discs/blue.png");
+                    PointBall.Setpos(CanvaForKinect, x, y);
+                    gameball.Collision(CanvaForKinect, PointBall);
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        #endregion
     }
 }

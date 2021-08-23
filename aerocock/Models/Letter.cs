@@ -1,30 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace aerocock
+namespace aerocock.Models
 {
-    class Letter
+    internal class Letter
     {
-        //public int i { get; set; }//x-индекс зацепа от -11 до 11 (включая 0)
-        //public int j { get; set; }
-        //public char letter;
-        public Vector coord { get; set; }
         public TextBlock textBlock;
+
         public Letter(Hook _hook, TextBlock _block)
         {
             coord = new Vector(_hook.coord.X, _hook.coord.Y);
-            int fontsize = 40;
-            Random rd = new Random();
-            SolidColorBrush[] colors = { Brushes.LightBlue, Brushes.LightYellow, Brushes.LightGreen, Brushes.Crimson,
-                                       Brushes.Blue, Brushes.Yellow, Brushes.Green,Brushes.Red,
-                                        Brushes.Aqua, Brushes.Coral};
-            textBlock = new TextBlock()
+            var fontsize = 40;
+            var rd = new Random();
+            SolidColorBrush[] colors =
+            {
+                Brushes.LightBlue, Brushes.LightYellow, Brushes.LightGreen, Brushes.Crimson,
+                Brushes.Blue, Brushes.Yellow, Brushes.Green, Brushes.Red,
+                Brushes.Aqua, Brushes.Coral
+            };
+            textBlock = new TextBlock
             {
                 Text = _block.Text,
                 //Margin = _block.Margin,
@@ -32,50 +29,53 @@ namespace aerocock
                 HorizontalAlignment = HorizontalAlignment.Left,
                 FontSize = fontsize,
                 Margin = new Thickness(fontsize * coord.X / 1.5, fontsize * coord.Y / 1.5, 0, 0),
-                Foreground = Brushes.White// colors[rd.Next(10)]
+                Foreground = Brushes.White // colors[rd.Next(10)]
             };
-            
-            
-                      // letter = textBlock.Text[0];
 
+
+            // letter = textBlock.Text[0];
         }
+
         public Letter(Grid _grid, List<Hook> _hooks, TextBlock _block, int _height)
         {
             while (true)
             {
-                Random rd = new Random();
-                int hookRd = rd.Next(_hooks.Count);
+                var rd = new Random();
+                var hookRd = rd.Next(_hooks.Count);
 
                 if (!_hooks[hookRd].isBusy)
                 {
                     //Thread.Sleep(500);
-                    (_hooks[hookRd]).isBusy = true;
+                    _hooks[hookRd].isBusy = true;
                     coord = new Vector(_hooks[hookRd].coord.X, _hooks[hookRd].coord.Y);
                     //coord.i = _hooks[hookRd].coord.i;
                     //j = _hooks[hookRd].j;
-                    int fontsize = 40;
+                    var fontsize = 40;
                     //Random colorRd = new Random();
-                    SolidColorBrush[] colors = { Brushes.LightBlue, Brushes.LightYellow, Brushes.LightGreen, Brushes.Crimson,
-                                       Brushes.Blue, Brushes.Yellow, Brushes.Green,Brushes.Red,
-                                        Brushes.Aqua, Brushes.Coral};
-                    textBlock = new TextBlock()
+                    SolidColorBrush[] colors =
+                    {
+                        Brushes.LightBlue, Brushes.LightYellow, Brushes.LightGreen, Brushes.Crimson,
+                        Brushes.Blue, Brushes.Yellow, Brushes.Green, Brushes.Red,
+                        Brushes.Aqua, Brushes.Coral
+                    };
+                    textBlock = new TextBlock
                     {
                         Text = _block.Text,
                         //Margin = _block.Margin,
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         FontSize = fontsize,
-                        Margin = new Thickness(_height / 12 * coord.X / 0.125, -_height / 12 * (coord.Y / 0.125 + 1), 0, 0),///поменять всё на константы!!!!
-                        Foreground = Brushes.White// colors[rd.Next(10)]
+                        Margin = new Thickness(_height / 12 * coord.X / 0.125, -_height / 12 * (coord.Y / 0.125 + 1), 0,
+                            0), ///поменять всё на константы!!!!
+                        Foreground = Brushes.White // colors[rd.Next(10)]
                     };
                     _grid.Children.Add(textBlock);
                     //Panel.SetZIndex(Start.)
                     break;
                 }
             }
-
-
         }
+
         public Letter(double _x, double _y, char _c)
         {
             coord = new Vector(_x, _y);
@@ -89,9 +89,14 @@ namespace aerocock
             //textBlock.HorizontalAlignment = HorizontalAlignment.Center;
             //textBlock.Visibility = Visibility.Visible;
             textBlock.Foreground = Brushes.Red;
-            int fontsize = 40;
+            var fontsize = 40;
             textBlock.FontSize = fontsize;
             //textBlock.Margin = new Thickness(fontsize * (i - words[numWord].Length / 2), 0, 0, 0);
         }
+
+        //public int i { get; set; }//x-индекс зацепа от -11 до 11 (включая 0)
+        //public int j { get; set; }
+        //public char letter;
+        public Vector coord { get; set; }
     }
 }

@@ -3,43 +3,40 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:aerocock"
         mc:Ignorable="d"
-        Title="MainWindow" WindowStyle="none" Loaded="Window_Loaded"  Width="700" Height="500" KeyDown="Window_KeyDown">
+        Title="MainWindow" WindowStyle="none" Loaded="Window_Loaded" Width="700" Height="500" KeyDown="Window_KeyDown">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="9,0">
-            <GradientStop Color="#FAC79990" Offset="0"/>
-            <GradientStop Color="White" Offset="1"/>
+            <GradientStop Color="#FAC79990" Offset="0" />
+            <GradientStop Color="White" Offset="1" />
         </LinearGradientBrush>
     </Window.Background>
-    <Canvas x:Name="Canva" >
+    <Canvas x:Name="Canva">
         <Canvas.Background>
             <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
                 <LinearGradientBrush.RelativeTransform>
                     <TransformGroup>
-                        <ScaleTransform CenterY="0.5" CenterX="0.5"/>
-                        <SkewTransform CenterY="0.5" CenterX="0.5"/>
-                        <RotateTransform CenterY="0.5" CenterX="0.5"/>
-                        <TranslateTransform/>
+                        <ScaleTransform CenterY="0.5" CenterX="0.5" />
+                        <SkewTransform CenterY="0.5" CenterX="0.5" />
+                        <RotateTransform CenterY="0.5" CenterX="0.5" />
+                        <TranslateTransform />
                     </TransformGroup>
                 </LinearGradientBrush.RelativeTransform>
-                <GradientStop Color="#FF16E28F"/>
-                <GradientStop Color="#FF0F78F5" Offset="1"/>
-                <GradientStop Color="#FFCF6CAF" Offset="0.502"/>
+                <GradientStop Color="#FF16E28F" />
+                <GradientStop Color="#FF0F78F5" Offset="1" />
+                <GradientStop Color="#FFCF6CAF" Offset="0.502" />
             </LinearGradientBrush>
         </Canvas.Background>
-        <Button Content="Click me or press Q to EXIT" HorizontalAlignment="Left" VerticalAlignment="Top" Width="auto" Click="Button_Click"/>
-        <Grid x:Name="Grid" Width="800" >
-            <Rectangle x:Name="Border"  Stroke="Lime" StrokeThickness="10" Margin="29,133,104,-123" />
-            <TextBlock x:Name="countdownText" 
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="100"
-                   Foreground="Wheat"
-                   TextAlignment="Center"
-                   >
-            </TextBlock>
+        <Button Content="Click me or press Q to EXIT" HorizontalAlignment="Left" VerticalAlignment="Top" Width="auto"
+                Click="Button_Click" />
+        <Grid x:Name="Grid" Width="800">
+            <Rectangle x:Name="Border" Stroke="Lime" StrokeThickness="10" Margin="29,133,104,-123" />
+            <TextBlock x:Name="countdownText"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="100"
+                       Foreground="Wheat"
+                       TextAlignment="Center" />
         </Grid>
     </Canvas>
 </Window>
-

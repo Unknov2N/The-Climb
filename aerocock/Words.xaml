@@ -3,10 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:aerocock"
         mc:Ignorable="d"
-        Title="Words" WindowState="Maximized" WindowStyle="none" Loaded="Window_Loaded" Background="Black" 
-        KeyDown="Window_KeyDown" MouseDown="Window_MouseDown"  Width="800" Height="600">
+        Title="Words" WindowState="Maximized" WindowStyle="none" Loaded="Window_Loaded" Background="Black"
+        KeyDown="Window_KeyDown" MouseDown="Window_MouseDown" Width="800" Height="600">
     <Grid x:Name="textGrid" TextElement.FontFamily="Comic Sans MS">
 
         <Canvas x:Name="Canva" Width="800" Height="600" Background="Black">
@@ -30,46 +29,49 @@
                              Visibility="Visible"
                              VerticalAlignment="Center"
                              TextAlignment="Center" Canvas.Left="500" Canvas.Top="100" Height="90"/-->
-            <Grid x:Name="Grid" Width="800" Height="400" >
-                <Image x:Name="box"/>
+            <Grid x:Name="Grid" Width="800" Height="400">
+                <Image x:Name="box" />
                 <!--Rectangle x:Name="leftborder"  Stroke="Coral" StrokeThickness="10" Margin="0,0,400,0" />
                 <Rectangle x:Name="rightborder" Stroke="MediumSlateBlue" StrokeThickness="10" Margin="400,0,0,0"/-->
                 <!--FontFamily="pack://application:,,,/Objects/Fonts/#a_LCDNova"-->
-                <TextBlock x:Name="countdownText" 
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontSize="20"
-                       Foreground="White"
-                       Background="Black"
-                       TextAlignment="Center"
-                       >
-                </TextBlock>
+                <TextBlock x:Name="countdownText"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="20"
+                           Foreground="White"
+                           Background="Black"
+                           TextAlignment="Center" />
                 <TextBlock x:Name="KinectError"
                            FontSize="75"
                            Foreground="White"
                            Text="Кинект не подключен"
                            Visibility="Hidden"
                            VerticalAlignment="Center"
-                           TextAlignment="Center"></TextBlock>
+                           TextAlignment="Center" />
             </Grid>
-            <Canvas x:Name="CanvaForKinect"/>
+            <Canvas x:Name="CanvaForKinect" />
         </Canvas>
-        <Button x:Name="Start" Content="starting..." HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Begin_Click" Height="100" Margin="10,10,0,0"></Button>
-        <CheckBox x:Name="Back" Click="Button_Click" Style="{DynamicResource SquareButtonStyle}" Content="" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" />
+        <Button x:Name="Start" Content="starting..." HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                Click="Begin_Click" Height="100" Margin="10,10,0,0" />
+        <CheckBox x:Name="Back" Click="Button_Click" Style="{DynamicResource SquareButtonStyle}" Content=""
+                  HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" />
         <!--<Button Content="   X   " HorizontalAlignment="Left" VerticalAlignment="Top" Width="auto" Click="Button_Click"/>-->
         <TextBlock x:Name="test"
-            Foreground="White"
-            FontSize="100"
-            Text=""
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Right"
-            />
+                   Foreground="White"
+                   FontSize="100"
+                   Text=""
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Right" />
 
         <!--<TextBlock x:Name="leftScore" TextWrapping="Wrap" Text="0" Foreground="Red"   FontSize="50" HorizontalAlignment="Left" Margin="300,0,0,0"/>-->
         <!--<TextBlock x:Name="rightScore" TextWrapping="Wrap" Text="0" Foreground="Blue" FontSize="50" HorizontalAlignment="Right" Margin="0,0,300,0"/>-->
-        <TextBlock x:Name="xCoord" TextWrapping="Wrap" Text="0" Foreground="Blue" FontSize="50" VerticalAlignment="Top"  HorizontalAlignment="Center" Margin="0,20,500,0"/>
-        <TextBlock x:Name="yCoord" TextWrapping="Wrap" Text="0" Foreground="Red" FontSize="50" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="500,20,0,0"/>
-        <TextBlock x:Name="ReadyPlayer" Text="" Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" FontSize="46" Foreground="White" Width="160" Height="60"/>
+        <TextBlock x:Name="xCoord" TextWrapping="Wrap" Text="0" Foreground="Blue" FontSize="50" VerticalAlignment="Top"
+                   HorizontalAlignment="Center" Margin="0,20,500,0" />
+        <TextBlock x:Name="yCoord" TextWrapping="Wrap" Text="0" Foreground="Red" FontSize="50" VerticalAlignment="Top"
+                   HorizontalAlignment="Center" Margin="500,20,0,0" />
+        <TextBlock x:Name="ReadyPlayer" Text="" Visibility="Hidden" HorizontalAlignment="Center"
+                   VerticalAlignment="Center" TextAlignment="Center" FontSize="46" Foreground="White" Width="160"
+                   Height="60" />
         <TextBlock x:Name="timeRemaining" Text=""
                    Margin="0,0,0,0"
                    HorizontalAlignment="Center"
@@ -78,9 +80,7 @@
                    Foreground="White"
                    TextAlignment="Center"
                    Background="Black"
-                   Visibility="Hidden"
-                   >
-        </TextBlock>
-        <Grid x:Name="letterGrid"/>
+                   Visibility="Hidden" />
+        <Grid x:Name="letterGrid" />
     </Grid>
 </Window>

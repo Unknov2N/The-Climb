@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aerocock", "aerocock\aerocock.csproj", "{3D4B1DAE-F395-47B6-8C8B-48E6103A06B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheClimb", "TheClimb\TheClimb.csproj", "{7B06B871-2E81-4463-A7DE-C25B9BF8946A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheClimb.Core", "TheClimb.Core\TheClimb.Core.csproj", "{60DD9FE5-7924-4AF6-8266-F50A4A8BD76A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{3D4B1DAE-F395-47B6-8C8B-48E6103A06B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D4B1DAE-F395-47B6-8C8B-48E6103A06B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D4B1DAE-F395-47B6-8C8B-48E6103A06B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B06B871-2E81-4463-A7DE-C25B9BF8946A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B06B871-2E81-4463-A7DE-C25B9BF8946A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B06B871-2E81-4463-A7DE-C25B9BF8946A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B06B871-2E81-4463-A7DE-C25B9BF8946A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60DD9FE5-7924-4AF6-8266-F50A4A8BD76A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60DD9FE5-7924-4AF6-8266-F50A4A8BD76A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60DD9FE5-7924-4AF6-8266-F50A4A8BD76A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60DD9FE5-7924-4AF6-8266-F50A4A8BD76A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

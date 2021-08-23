@@ -6,106 +6,111 @@
         xmlns:local="clr-namespace:aerocock"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance local:Cooperative}"
-        Title="Cooperative" WindowState="Maximized" WindowStyle="none" Background="Black" Loaded="Window_Loaded" MouseDown="Window_MouseDown"  KeyDown="Window_KeyDown" Width="800" Height="600" >
+        Title="Cooperative" WindowState="Maximized" WindowStyle="none" Background="Black" Loaded="Window_Loaded"
+        MouseDown="Window_MouseDown" KeyDown="Window_KeyDown" Width="800" Height="600">
     <!-- -->
     <Grid x:Name="textGrid" TextElement.FontFamily="pack://application:,,,/Objects/Fonts/#a_LCDNova">
-        <Canvas x:Name="Canva"  Background="Black" Margin="48,21,42,45">
+        <Canvas x:Name="Canva" Background="Black" Margin="48,21,42,45">
             <TextBlock x:Name="ReadyPlayer1"
-                          FontSize="75"
-                          Foreground="White"
-                          Text="ГОТОВ"
-                          Visibility="Visible"
-                          TextAlignment="Center" Canvas.Left="50" Canvas.Top="50" Height="90"/>
+                       FontSize="75"
+                       Foreground="White"
+                       Text="ГОТОВ"
+                       Visibility="Visible"
+                       TextAlignment="Center" Canvas.Left="50" Canvas.Top="50" Height="90" />
             <TextBlock x:Name="ReadyPlayer2"
-                             FontSize="75"
-                             Foreground="White"
-                             Text="ГОТОВ"
-                             Visibility="Visible"
-                             VerticalAlignment="Center"
-                             TextAlignment="Center" Canvas.Right="50" Canvas.Top="50" Height="90"/>
-            <Grid x:Name="Grid" Width="800" >
-                <Image x:Name="box"/>
+                       FontSize="75"
+                       Foreground="White"
+                       Text="ГОТОВ"
+                       Visibility="Visible"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center" Canvas.Right="50" Canvas.Top="50" Height="90" />
+            <Grid x:Name="Grid" Width="800">
+                <Image x:Name="box" />
                 <!--Rectangle x:Name="Border"  Stroke="Lime" StrokeThickness="10" Margin="29,133,104,-123" /-->
-                <TextBlock x:Name="countdownText" 
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="60"
-                   Foreground="White"
-                   TextAlignment="Center"
-                   >
-                </TextBlock>
+                <TextBlock x:Name="countdownText"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="60"
+                           Foreground="White"
+                           TextAlignment="Center" />
             </Grid>
-            <Canvas x:Name="CanvaForKinect"/>
+            <Canvas x:Name="CanvaForKinect" />
         </Canvas>
-        <CheckBox x:Name="Back" Click="Button_Click" Content="" HorizontalAlignment="Left" Height="100" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Top" Width="100" />
+        <CheckBox x:Name="Back" Click="Button_Click" Content="" HorizontalAlignment="Left" Height="100"
+                  Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Top" Width="100" />
 
-        <TextBlock x:Name="scoreText" TextWrapping="Wrap" Text=" " Foreground="LightGreen"   FontSize="50" HorizontalAlignment="Center" Margin="-400,20,0,0"/>
+        <TextBlock x:Name="scoreText" TextWrapping="Wrap" Text=" " Foreground="LightGreen" FontSize="50"
+                   HorizontalAlignment="Center" Margin="-400,20,0,0" />
         <TextBlock x:Name="timerText" Text=" "
                    Margin="400,20,0,0"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Top"
                    FontSize="50"
                    Foreground="White"
-                   TextAlignment="Center"
-                   >
-        </TextBlock>
-        <Image x:Name="one_x" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,-300,0" Source="Objects\whiteX.png" Stretch="None" RenderTransformOrigin="0.5,0.5" >
+                   TextAlignment="Center" />
+        <Image x:Name="one_x" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,-300,0"
+               Source="Objects\whiteX.png" Stretch="None" RenderTransformOrigin="0.5,0.5">
             <Image.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleY="0.5" ScaleX="0.5"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
+                    <ScaleTransform ScaleY="0.5" ScaleX="0.5" />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
-        <Image x:Name="two_x" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,-400,0" Source="Objects\whiteX.png" Stretch="None" RenderTransformOrigin="0.5,0.5" >
+        <Image x:Name="two_x" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,-400,0"
+               Source="Objects\whiteX.png" Stretch="None" RenderTransformOrigin="0.5,0.5">
             <Image.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleY="0.5" ScaleX="0.5"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
+                    <ScaleTransform ScaleY="0.5" ScaleX="0.5" />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
-        <Image x:Name="three_x" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,-500,0" Source="Objects\whiteX.png" Stretch="None" RenderTransformOrigin="0.5,0.5" >
+        <Image x:Name="three_x" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,-500,0"
+               Source="Objects\whiteX.png" Stretch="None" RenderTransformOrigin="0.5,0.5">
             <Image.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleY="0.5" ScaleX="0.5"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
+                    <ScaleTransform ScaleY="0.5" ScaleX="0.5" />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
-        <Image x:Name="one_x_red" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,-300,0" Source="Objects\redX1.png" Stretch="None" RenderTransformOrigin="0.5,0.5" >
+        <Image x:Name="one_x_red" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Center"
+               Margin="0,0,-300,0" Source="Objects\redX1.png" Stretch="None" RenderTransformOrigin="0.5,0.5">
             <Image.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleY="0.5" ScaleX="0.5"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
+                    <ScaleTransform ScaleY="0.5" ScaleX="0.5" />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
-        <Image x:Name="two_x_red" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,-400,0" Source="Objects\redX1.png" Stretch="None" RenderTransformOrigin="0.5,0.5" >
+        <Image x:Name="two_x_red" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Center"
+               Margin="0,0,-400,0" Source="Objects\redX1.png" Stretch="None" RenderTransformOrigin="0.5,0.5">
             <Image.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleY="0.5" ScaleX="0.5"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
+                    <ScaleTransform ScaleY="0.5" ScaleX="0.5" />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
-        <Image x:Name="three_x_red" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,-500,0" Source="Objects\redX1.png" Stretch="None" RenderTransformOrigin="0.5,0.5" >
+        <Image x:Name="three_x_red" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Center"
+               Margin="0,0,-500,0" Source="Objects\redX1.png" Stretch="None" RenderTransformOrigin="0.5,0.5">
             <Image.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleY="0.5" ScaleX="0.5"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
+                    <ScaleTransform ScaleY="0.5" ScaleX="0.5" />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
